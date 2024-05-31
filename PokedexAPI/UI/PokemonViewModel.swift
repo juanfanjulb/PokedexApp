@@ -58,21 +58,6 @@ class PokemonViewModel: ObservableObject {
         fetchPokemonsFromCoreData(context: context)
     }
     
-//    func savePokemonToCoreData(pokemon: Pokemon, context: NSManagedObjectContext) {
-//        let _pokemon = Pokemon.create(passedContext: context)
-//        
-//        _pokemon.id = pokemon.id
-//        _pokemon.name = pokemon.name
-//        _pokemon.types = pokemon.types
-//        _pokemon.sprite = pokemon.sprite
-//        _pokemon.hp = pokemon.hp
-//        _pokemon.attack = pokemon.attack
-//        _pokemon.defense = pokemon.defense
-//        _pokemon.favourite = false
-//        
-//        context.saveAndThrow()
-//    }
-    
     func fetchPokemonsFromCoreData(context: NSManagedObjectContext) {
         if let allPokemon = Pokemon.getAll(passedContext: context) {
             for pokemon in allPokemon {
