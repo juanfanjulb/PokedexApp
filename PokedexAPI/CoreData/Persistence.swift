@@ -14,23 +14,26 @@ class PersistenceController {
     /// Global instance of NSPersistentContainer
     var persistentContainer: NSPersistentContainer?
 
-    static var preview: PersistenceController = {
-        let result = PersistenceController()
-        let viewContext = result.container.viewContext
-//        for _ in 0..<10 {
-//            let newItem = Item(context: viewContext)
-//            newItem.timestamp = Date()
+//    static var preview: PersistenceController = {
+//        let result = PersistenceController()
+//        let viewContext = result.container.viewContext
+//        let samplePokemon = Pokemon(context: viewContext)
+//        samplePokemon.id = 1
+//        samplePokemon.name = "bulbasaur"
+//        samplePokemon.types = ["grass", "poison"]
+//        samplePokemon.hp = 45
+//        samplePokemon.attack = 49
+//        samplePokemon.defense = 49
+//        samplePokemon.favourite = false
+//        samplePokemon.sprite = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png"
+//        do {
+//            try viewContext.save()
+//        } catch {
+//            let nsError = error as NSError
+//            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
 //        }
-        do {
-            try viewContext.save()
-        } catch {
-            // Replace this implementation with code to handle the error appropriately.
-            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-        }
-        return result
-    }()
+//        return result
+//    }()
 
     
     /// Initializes the persistent store

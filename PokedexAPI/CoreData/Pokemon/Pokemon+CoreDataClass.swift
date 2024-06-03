@@ -118,7 +118,7 @@ public class Pokemon: NSManagedObject, Codable {
         context.saveAndThrow()
     }
     
-    /// Fetched and returns all Pokemon objects with the passed context or the viewContext if nil.
+    /// Fetches and returns all Pokemon objects with the passed context or the viewContext if nil.
     static func getAll(passedContext: NSManagedObjectContext? = nil) -> [Pokemon]? {
         let context = passedContext ?? PersistenceController.shared.getViewContext()
         
@@ -134,8 +134,88 @@ public class Pokemon: NSManagedObject, Codable {
             }
         }
     }
+    
+    /// Get pokemon from core data by names
+    /// If only one is needed then send an array containing just one name
+    static func getAllByNames(passedContext: NSManagedObjectContext? = nil, pokemonNames: [String]) -> [Pokemon]? {
+        let context = passedContext ?? PersistenceController.shared.getViewContext()
+        let fetch = NSFetchRequest<Pokemon>(entityName: "Pokemon")
+        let predicate = NSPredicate(format: "name IN %@", pokemonNames)
+        
+        return context.performAndWait {
+            do {
+                let fetchResults = try context.fetch(fetch)
+                
+                var pokemonArray: [Pokemon] = []
+                fetchResults.forEach { pokemon in
+                    pokemonArray.append(pokemon)
+                }
+                
+                return pokemonArray
+            } catch let error {
+                print("Unable to fetch pokemon from coredata")
+                return nil
+            }
+        }
+    }
+    
+    /// Deletes all Form objects from CoreData with passed context or the viewContext if nil
+    static func deleteAll(passedContext: NSManagedObjectContext? = nil) {
+        let context = passedContext ?? PersistenceController.shared.getViewContext()
+        
+        context.performAndWait {
+            do {
+                let forms = try context.fetch(self.fetchRequest())
+                
+                for form in forms {
+                    context.delete(form)
+                }
+                
+            } catch let error {
+                print("Unable to delete all Pokemon Data from Core Data.")
+            }
+        }
+    }
+    
+    /// Delete a specified pokemon from core data
+    static func deleteById(passedContext: NSManagedObjectContext? = nil, pokemonId: Int) {
+        let context = passedContext ?? PersistenceController.shared.getViewContext()
+        let fetch = NSFetchRequest<Pokemon>(entityName: "Pokemon")
+        let predicate = NSPredicate(format: "id = %i", pokemonId)
+        fetch.predicate = predicate
+        
+        context.performAndWait {
+            do {
+                guard let fetchResult = try context.fetch(fetch).first(where: { $0.id == pokemonId }) else{
+                    print("Unable to delete Pokemon from Core Data.")
+                    return
+                }
+                // Delete result and save
+                context.delete(fetchResult)
+                context.saveAndThrow()
+            } catch let error {
+                print("Unable to fetch pokemon from coredata")
+                return
+            }
+        }
+        
+        context.performAndWait {
+            do {
+                guard let fetchResult = try context.fetch(self.fetchRequest()).first else {
+                    print("Unable to delete Pokemon from Core Data.")
+                    return
+                }
+                // Delete result.
+                context.delete(fetchResult)
+                context.saveAndThrow()
+                
+            } catch let error {
+                print("Unable to fetch Pokemon from Core Data.")
+                return
+            }
+        }
+    }
 }
-
 
 // MARK: - CodingUserInfoKey extension
 extension CodingUserInfoKey {

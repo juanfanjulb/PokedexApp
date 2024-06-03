@@ -12,9 +12,9 @@ struct ContentView: View {
 //    @Environment(\.managedObjectContext) private var viewContext
 //
 //    @FetchRequest(
-//        sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
+//        sortDescriptors: [NSSortDescriptor(keyPath: \Pokemon.id, ascending: true)],
 //        animation: .default)
-//    private var items: FetchedResults<Item>
+//    private var pokemon: FetchedResults<Pokemon>
     @ObservedObject var viewModel: PokemonViewModel
     
     init() {
@@ -33,12 +33,12 @@ struct ContentView: View {
                             ForEach(viewModel.pokemonData.indices, id: \.self) { index in
                                 let pokemon = viewModel.pokemonData[index]
                                 
-                                Text(String(pokemon.id))
-                                Text(pokemon.name ?? "")
+                                PokemonCell(id: Int(pokemon.id), name: pokemon.name ?? "", types: pokemon.types ?? [], hp: Int(pokemon.hp), attack: Int(pokemon.attack), defense: Int(pokemon.defense), sprite: pokemon.sprite ?? "", favourite: pokemon.favourite)
+                                    .padding(.vertical, 10)
                             }
                         }
                     }
-                } else {
+                } else if viewModel.pokemonDataStatus == .loading {
                     ProgressView("Loading Pokémon...")
                 }
                 
@@ -50,21 +50,11 @@ struct ContentView: View {
                 }, label: {
                     Text("Button")
                 })
-                
-                if !viewModel.namesAndUrls.isEmpty {
-                    Button(action: {
-                        Task {
-                            await viewModel.fetchPokemonInfo()
-                        }
-                    }, label: {
-                        /*@START_MENU_TOKEN@*/Text("Button")/*@END_MENU_TOKEN@*/
-                    })
-                }
             }
         }
     }
 }
 
 #Preview {
-    ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+    ContentView()
 }
