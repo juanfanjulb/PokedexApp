@@ -9,17 +9,11 @@ import SwiftUI
 import CoreData
 
 struct ContentView: View {
-//    @Environment(\.managedObjectContext) private var viewContext
-//
-//    @FetchRequest(
-//        sortDescriptors: [NSSortDescriptor(keyPath: \Pokemon.id, ascending: true)],
-//        animation: .default)
-//    private var pokemon: FetchedResults<Pokemon>
     @ObservedObject var viewModel: PokemonViewModel
     
     init() {
         // Initialize Core Data on app launch.
-        PersistenceController.shared.loadStore()
+        //PersistenceController.shared.loadStore()
         
         viewModel = PokemonViewModel()
     }
@@ -29,15 +23,25 @@ struct ContentView: View {
             VStack {
                 if !viewModel.pokemonData.isEmpty {
                     ScrollView {
-                        LazyVStack {
+                        LazyVStack(spacing: 0) {
                             ForEach(viewModel.pokemonData.indices, id: \.self) { index in
                                 let pokemon = viewModel.pokemonData[index]
                                 
-                                PokemonCell(id: Int(pokemon.id), name: pokemon.name ?? "", types: pokemon.types ?? [], hp: Int(pokemon.hp), attack: Int(pokemon.attack), defense: Int(pokemon.defense), sprite: pokemon.sprite ?? "", favourite: pokemon.favourite)
-                                    .padding(.vertical, 10)
+                                PokemonCell(id: Int(pokemon.id), name: pokemon.name ?? "", types: pokemon.types ?? [], hp: Int(pokemon.hp), attack: Int(pokemon.attack), defense: Int(pokemon.defense), sprite: pokemon.sprite ?? "", favourite: pokemon.favourite, height: 50)
+                                
+                                Divider()
+                                    .frame(height: 1)
+                                    .foregroundStyle(.white)
+                                    //.padding(.vertical, 10)
                             }
                         }
                     }
+                    .border(Color.blue, width: 8)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .padding(.top, 30)
+                    .padding(.bottom, 16)
+                    .padding(.horizontal, 10)
+                    
                 } else if viewModel.pokemonDataStatus == .loading {
                     ProgressView("Loading Pokémon...")
                 }
@@ -46,7 +50,6 @@ struct ContentView: View {
                     Task {
                         await viewModel.getInitialPokemonData()
                     }
-                    //viewModel
                 }, label: {
                     Text("Button")
                 })
@@ -56,5 +59,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
 }

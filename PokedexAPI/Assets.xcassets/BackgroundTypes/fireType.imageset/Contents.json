@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "fireType.jpeg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

@@ -14,27 +14,43 @@ class PersistenceController {
     /// Global instance of NSPersistentContainer
     var persistentContainer: NSPersistentContainer?
 
-//    static var preview: PersistenceController = {
-//        let result = PersistenceController()
-//        let viewContext = result.container.viewContext
-//        let samplePokemon = Pokemon(context: viewContext)
-//        samplePokemon.id = 1
-//        samplePokemon.name = "bulbasaur"
-//        samplePokemon.types = ["grass", "poison"]
-//        samplePokemon.hp = 45
-//        samplePokemon.attack = 49
-//        samplePokemon.defense = 49
-//        samplePokemon.favourite = false
-//        samplePokemon.sprite = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png"
-//        do {
-//            try viewContext.save()
-//        } catch {
-//            let nsError = error as NSError
-//            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-//        }
-//        return result
-//    }()
+    static var preview: PersistenceController = {
+        let result = PersistenceController()
+        let viewContext = result.container.viewContext
+        let samplePokemon = Pokemon(context: viewContext)
+        samplePokemon.id = 1
+        samplePokemon.name = "bulbasaur"
+        samplePokemon.types = ["grass", "poison"]
+        samplePokemon.hp = 45
+        samplePokemon.attack = 49
+        samplePokemon.defense = 49
+        samplePokemon.favourite = false
+        samplePokemon.sprite = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png"
+        do {
+            try viewContext.save()
+        } catch {
+            let nsError = error as NSError
+            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+        }
+        return result
+    }()
 
+    
+    init(inMemory: Bool = false) {
+        //container = NSPersistentContainer(name: "something")
+        if inMemory {
+            container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
+        }
+        container.loadPersistentStores(completionHandler: { (storeDescription, error) in
+            if let error = error as NSError? {
+                fatalError("Unresolved error \(error), \(error.userInfo)")
+            }
+        })
+        container.viewContext.automaticallyMergesChangesFromParent = true
+        
+        self.persistentContainer = container
+        print("Successfully initialized NSPersistentContainer.")
+    }
     
     /// Initializes the persistent store
     func loadStore() {

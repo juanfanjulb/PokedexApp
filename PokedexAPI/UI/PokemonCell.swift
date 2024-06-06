@@ -17,18 +17,20 @@ struct PokemonCell: View {
     let defense: Int
     let sprite: String
     @State var favourite: Bool
-    let height: CGFloat? = 40
+    let height: CGFloat
     
     var body: some View {
         ZStack {
             VStack {
                 HStack {
                     AsyncImage(url: URL(string: sprite))
+                        .aspectRatio(contentMode: .fill)
                         .frame(width: height, height: height)
-                        .scaledToFit()
+                        //.padding(.vertical, attack > 60 ? 8 : 0)
+                       
                     
                     Text(name)
-                        .padding(.leading, 16)
+                        .padding(.leading, 5)
                     
                     Spacer()
                     
@@ -44,20 +46,29 @@ struct PokemonCell: View {
                     
                     
                 }
-                .padding(.horizontal, 16)
+                .padding(.horizontal, attack > 70 ? 30 : 16)
             }
-            .frame(height: height)
+            
+            .background(
+                Rectangle()
+                    .foregroundStyle(.clear)
+                    .overlay {
+                        ImageForType().getImageForType(pokemonTypes: types, height:attack < 60 ? height : CGFloat(attack))
+                            .opacity(0.8)
+                    }
+            )
         }
+        .frame(height: attack < 60 ? height : CGFloat(attack))
     }
 }
 
 #Preview {
     PokemonCell(id: 11,
                 name: "Ditto",
-                types: [],
+                types: ["water", "ice"],
                 hp: 49,
-                attack: 49,
+                attack: 80,
                 defense: 49,
-                sprite: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/9.png",
-                favourite: false)
+                sprite: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/6.png",
+                favourite: false , height: 60)
 }

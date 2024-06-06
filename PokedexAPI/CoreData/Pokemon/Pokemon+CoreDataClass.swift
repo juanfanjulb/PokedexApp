@@ -141,6 +141,7 @@ public class Pokemon: NSManagedObject, Codable {
         let context = passedContext ?? PersistenceController.shared.getViewContext()
         let fetch = NSFetchRequest<Pokemon>(entityName: "Pokemon")
         let predicate = NSPredicate(format: "name IN %@", pokemonNames)
+        fetch.predicate = predicate
         
         return context.performAndWait {
             do {
@@ -152,7 +153,7 @@ public class Pokemon: NSManagedObject, Codable {
                 }
                 
                 return pokemonArray
-            } catch let error {
+            } catch {
                 print("Unable to fetch pokemon from coredata")
                 return nil
             }
